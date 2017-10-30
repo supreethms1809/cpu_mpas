@@ -1,0 +1,33 @@
+#!/bin/tcsh
+#PBS -A NTDD0002
+#PBS -l walltime=02:00:00
+#PBS -N MPAS
+#PBS -o baseCode1.out
+#PBS -e baseCode1.err
+#PBS -q regular
+#PBS -l select=1:ncpus=36:mpiprocs=36
+##:ompthreads=1
+
+#module purge
+#module load intel
+#module load pnetcdf
+#module load netcdf
+#module list
+module purge
+module load ncarenv/1.1
+module load intel/17.0.1
+module load mpt/2.15f
+module load ncarcompilers/0.4.1
+module load netcdf
+module load pnetcdf/1.8.0
+etenv PIO /glade/p/work/raghuraj/intelmpas5/pio/run
+setenv JASPERLIB /glade/u/home/wrfhelp/UNGRIB_LIBRARIES/lib
+setenv JASPERINC /glade/u/home/wrfhelp/UNGRIB_LIBRARIES/include
+
+# ignore this section
+
+
+cd /glade/p/work/slaksh/newmpas5.2/mpas_broadwell/mpas52_broad/benchmark/
+#run the executable
+mpiexec_mpt  dmplace -s 1 ./atmosphere_model
+#mpiexec.lsf ./atmosphere_model

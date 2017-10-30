@@ -1,4 +1,11 @@
 #!/bin/bash
+#BSUB ­o mpas.out
+#BSUB ­e mpas.err
+#BSUB ­R "span[ptile=16]"
+#BSUB ­n 1
+#BSUB ­q batch
+#BSUB ­P ACC
+#BSUB ­W 30 #­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­ export OMP_NUM_THREADS=1
 
 module purge
 module load cmake/3.7.0
@@ -45,9 +52,13 @@ export NETCDF_C=/home/ssuresh/modules/netcdf/netcdf/
 export NETCDF_F=/home/ssuresh/modules/netcdf/netcdf_f/
 export PNETCDF=/home/ssuresh/modules/pnetcdf/pnetcdf180/
 
-cd /home/ssuresh/cpu_mpas/MPAS/
+cd /home/ssuresh/cpu_mpas/benchmark/
+
+ulimit ­s unlimited
+mpirun –bind­to core ­n 16 ./atmosphere_model
+
 
 #Build core atmosphere main code
-make clean CORE=atmosphere
-make pgi CORE=atmosphere PRECISION=single
+#make clean CORE=atmosphere
+#make pgi CORE=atmosphere PRECISION=single
 

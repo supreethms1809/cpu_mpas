@@ -1,0 +1,112 @@
+MURaM_HOME_DIR = /glade/u/home/rempel/benchmark/
+
+# Debugging option (for development)
+DBG = #-DNDEBUG
+
+# Optimization option
+OPT = -O3 -xCORE-AVX2 -ipo  
+#OPT = -O3 -march=corei7 -axAVX -ipo 
+#OPT = -O3 -axAVX -xSSE4.1 -vec-report2 
+#-DMPICH_IGNORE_CXX_SEEK 
+#OPT = -O3 -xAVX -vec-report2
+#OPT = -O3 -msse3 -vec-report2 
+
+# FILEPATH option (default: ./) - This is useful
+# to write files to special directories on some machines
+FILEPATH = ./
+
+
+# Machine architecture
+ARCH = Linux 
+
+######## The shell command #############################
+SHELL=/bin/sh
+
+########################################################
+ALHOME= $(MURaM_HOME_DIR)/lib/ArrayLib
+ALLIBDIR = -L$(ALHOME)/lib
+ALINCDIR = -I$(ALHOME)/include
+ALLIB = -lal
+
+FFTWHOME= $(MURaM_HOME_DIR)/lib/fftw-2.1.5
+FFTWLIBDIR = -L$(FFTWHOME)/lib
+FFTWINCDIR = -I$(FFTWHOME)/include
+FFTWLIB = -lrfftw -lfftw #-lfftw_threads -lrfftw_threads -lpthread
+
+########################################################
+CFDHOME= $(MURaM_HOME_DIR)/lib/CFD
+CFDLIBDIR = -L$(CFDHOME)/lib
+CFDINCDIR = -I$(CFDHOME)/include
+CFDLIB = -lcfd
+
+######### MPI options ##################################
+MPIHOME=
+MPILIBDIR=
+MPIINCDIR=
+MPILIB= -lmpi
+
+######### ROMIO options #################################
+
+MPIOLIBDIR=
+MPIOINCDIR=
+MPIOLIB=
+
+######### General options ##############################
+#
+# All the relevant definitions are now in include/alconfig.h
+#           
+DEFS = $(OPT) $(DBG)
+#  -DHAVE_CONFIG_H -DHAS_MPI -DWITH_MPI -DTIMING -DMPICH_IGNORE_CXX_SEEK
+INCLUDES = -I. -I../include $(MPIINCDIR) $(MPIOINCDIR) $(ALINCDIR) $(CFDINCDIR) $(FFTWINCDIR)
+
+######### C options #####################################
+CC    = mpicc
+CCC   = mpicxx 
+
+CDEFS = $(DEFS)
+CLIBS = $(CFDLIBDIR) $(CFDLIB) $(ALLIBDIR) $(ALLIB) \
+	$(MPILIBDIR) $(MPIOLIB) $(MPILIB) $(FFTWLIBDIR) $(FFTWLIB) 
+#\
+#	-lm
+
+CFLAGS  = $(CDEFS) $(INCLUDES)
+CCFLAGS = $(CFLAGS)
+
+
+######## Mixed  command #################################
+AR = ar cv
+RANLIB = ranlib
+
+#CPP =  cc -E 
+#CPPFLAGS = $(CFLAGS) 
+#LN_S = ln -s
+#LEX = flex
+#LEXLIB = 
+#YACC = yacc
+
+# The variable used for VPATH
+VPATH = $(OBJ_DIR)
+
+##################################################################
+#
+# These are the useful keywords that can be used in the
+# Makefile
+#
+
+LINKER=$(FC)
+CLINKER=$(CC)
+FLINKER=$(FC)
+
+LIBS      = $(CLIBS) 
+
+######### Suffix rules ########################################
+
+.SUFFIXES :	.o .c .C .cpp .c++
+.c.o:
+	$(CC) $(CFLAGS) -c $<
+.C.o:
+	$(CCC) $(CCFLAGS) -c $<
+.cpp.o:
+	$(CCC) $(CCFLAGS) -c $<
+.c++.o:
+	$(CCC) $(CCFLAGS) -c $<
